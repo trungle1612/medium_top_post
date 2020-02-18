@@ -1,9 +1,8 @@
 defmodule Worker do
   @url "https://medium.com/topic/software-engineering"
-  @doc "Get top blog posts about software engineering on medium"
 
-  def read_url do
-    case HTTPoison.get @url do
+  def read_url(url) do
+    case HTTPoison.get url do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
        {:ok, body}
       {:ok, %HTTPoison.Response{body: body}} ->
@@ -14,7 +13,7 @@ defmodule Worker do
   end
 
   def top_list do
-    case read_url() do
+    case read_url(@url) do
       {:ok, body} ->
         {:ok, document} = Floki.parse_document(body)
         parse_top_list(document)
@@ -37,5 +36,19 @@ defmodule Worker do
     |> Enum.map(&parse_a_post(&1))
     |> List.flatten()
     |> Enum.into(%{})
+  end
+
+  def post(url) do
+    case read_url(url) do
+      {:ok, body} ->
+        {:ok, document} = Floki.parse_document(body)
+        parse_post(document)
+      {:error, _} -> IO.puts "Errors"
+    end
+  end
+
+  defp parse_post(document) do
+    Floki.find(document, "#root > div > article > div > section > div.n.p > div")
+    |> Floki.text()
   end
 end
