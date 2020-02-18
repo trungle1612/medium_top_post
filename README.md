@@ -1,21 +1,24 @@
-# Medium
+# Medium rss
+# This repo will display the newest pots on medium about software engineering.
 
-**TODO: Add description**
-
-## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `medium` to your list of dependencies in `mix.exs`:
+## Note
+- In this repo I used GenServer to save the data crawled to improve performance.
+## Run
 
 ```elixir
-def deps do
-  [
-    {:medium, "~> 0.1.0"}
-  ]
-end
+# make new process
+{:ok, pid} = Medium.start_link
+
+# Get Top list
+# If data not exists in state, this app will crawl and save to state
+# If data existsed in state, this app just call from state
+Medium.top_list(pid)
+
+# Read a post
+# If post not exists in state, this app will crawl and save to state
+# If post existsed in state, this app just call from state
+Medium.read(pid, post_id)
+
+## Check data
+Medium.check_data(pid)
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/medium](https://hexdocs.pm/medium).
-
